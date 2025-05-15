@@ -6,12 +6,15 @@
     <title>Apple Style Bingo</title>
     <style>
         :root {
-            --apple-light-gray: #f5f5f7;
-            --apple-dark-gray: #1d1d1f;
-            --apple-blue: #0071e3;
-            --apple-blue-hover: #0077ed;
+            --apple-dark-bg: #1d1d1f;
+            --apple-card-bg: #2c2c2e;
+            --apple-light-text: #f5f5f7;
+            --apple-blue: #0a84ff;
+            --apple-blue-hover: #1a94ff;
+            --apple-green: #30d158;
             --apple-border-radius: 18px;
-            --apple-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --apple-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --apple-input-bg: #3a3a3c;
         }
 
         * {
@@ -22,10 +25,11 @@
         }
 
         body {
-            background-color: var(--apple-light-gray);
-            color: var(--apple-dark-gray);
+            background-color: var(--apple-dark-bg);
+            color: var(--apple-light-text);
             line-height: 1.5;
             padding: 20px;
+            min-height: 100vh;
         }
 
         .container {
@@ -51,14 +55,20 @@
             margin-bottom: 20px;
         }
 
+        h3 {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
         p {
             font-size: 17px;
-            color: #86868b;
+            color: #a1a1a6;
             margin-bottom: 20px;
         }
 
         .card {
-            background-color: white;
+            background-color: var(--apple-card-bg);
             border-radius: var(--apple-border-radius);
             padding: 30px;
             margin-bottom: 20px;
@@ -76,11 +86,14 @@
             font-weight: 500;
             cursor: pointer;
             text-decoration: none;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
 
         .btn:hover {
             background-color: var(--apple-blue-hover);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -90,7 +103,15 @@
         }
 
         .btn-secondary:hover {
-            background-color: rgba(0, 113, 227, 0.1);
+            background-color: rgba(10, 132, 255, 0.1);
+        }
+
+        .btn-green {
+            background-color: var(--apple-green);
+        }
+
+        .btn-green:hover {
+            background-color: #40e168;
         }
 
         .form-group {
@@ -103,12 +124,14 @@
             font-weight: 500;
         }
 
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 12px 16px;
-            border: 1px solid #d2d2d7;
+            background-color: var(--apple-input-bg);
+            border: 1px solid #3a3a3c;
             border-radius: 12px;
             font-size: 17px;
+            color: white;
         }
 
         textarea {
@@ -130,8 +153,8 @@
 
         .bingo-cell {
             aspect-ratio: 1;
-            background-color: white;
-            border: 2px solid #d2d2d7;
+            background-color: var(--apple-input-bg);
+            border: 2px solid #3a3a3c;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -141,18 +164,20 @@
             font-size: 14px;
             transition: all 0.3s;
             cursor: pointer;
+            user-select: none;
         }
 
         .bingo-cell.selected {
-            background-color: var(--apple-blue);
+            background-color: var(--apple-green);
             color: white;
-            border-color: var(--apple-blue);
+            border-color: var(--apple-green);
+            transform: scale(0.98);
         }
 
         .bingo-cell.free {
-            background-color: #34c759;
+            background-color: var(--apple-blue);
             color: white;
-            border-color: #34c759;
+            border-color: var(--apple-blue);
         }
 
         /* Player list */
@@ -164,7 +189,7 @@
         }
 
         .player-tag {
-            background-color: white;
+            background-color: var(--apple-input-bg);
             border-radius: 980px;
             padding: 8px 16px;
             font-size: 14px;
@@ -178,6 +203,35 @@
             color: var(--apple-blue);
             margin: 20px 0;
             text-align: center;
+        }
+
+        /* Joker controls */
+        .joker-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .joker-value {
+            font-size: 24px;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .joker-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: var(--apple-input-bg);
+            border: none;
+            color: white;
         }
 
         /* Responsive */
@@ -203,17 +257,25 @@
             <p>Erstelle eine Runde und spiele mit Freunden</p>
         </header>
 
+        <!-- Main Menu Screen -->
+        <div id="main-menu-screen" class="card">
+            <h2>Was möchtest du tun?</h2>
+            <button id="create-game-menu-btn" class="btn">Neue Runde erstellen</button>
+            <button id="join-game-menu-btn" class="btn btn-secondary">Bestehender Runde beitreten</button>
+        </div>
+
         <!-- Create Game Screen -->
-        <div id="create-game-screen" class="card">
+        <div id="create-game-screen" class="card hidden">
             <h2>Neue Bingo-Runde erstellen</h2>
             <div class="form-group">
                 <label for="host-name">Dein Name</label>
                 <input type="text" id="host-name" placeholder="Gib deinen Namen ein">
             </div>
             <button id="create-game-btn" class="btn">Runde erstellen</button>
+            <button id="back-to-menu-btn" class="btn btn-secondary">Zurück</button>
         </div>
 
-        <!-- Join Game Screen (hidden initially) -->
+        <!-- Join Game Screen -->
         <div id="join-game-screen" class="card hidden">
             <h2>Bingo-Runde beitreten</h2>
             <div class="form-group">
@@ -225,10 +287,10 @@
                 <input type="text" id="game-id" placeholder="Gib die Game ID ein">
             </div>
             <button id="join-game-btn" class="btn">Beitreten</button>
-            <button id="back-to-create-btn" class="btn btn-secondary">Zurück</button>
+            <button id="back-to-menu-btn-2" class="btn btn-secondary">Zurück</button>
         </div>
 
-        <!-- Lobby Screen (hidden initially) -->
+        <!-- Lobby Screen -->
         <div id="lobby-screen" class="card hidden">
             <h2>Bingo-Lobby</h2>
             <div class="game-id">Game ID: <span id="display-game-id"></span></div>
@@ -237,6 +299,14 @@
                 <p>Teile die Game ID mit deinen Freunden, damit sie beitreten können.</p>
                 <h3>Spieler:</h3>
                 <div id="players-list" class="player-list"></div>
+                
+                <div class="joker-controls">
+                    <h3>Anzahl Joker:</h3>
+                    <button id="joker-decrease" class="joker-btn">-</button>
+                    <div id="joker-count" class="joker-value">0</div>
+                    <button id="joker-increase" class="joker-btn">+</button>
+                </div>
+                
                 <button id="start-adding-words-btn" class="btn">Begriffe sammeln starten</button>
             </div>
 
@@ -247,19 +317,19 @@
             </div>
         </div>
 
-        <!-- Add Words Screen (hidden initially) -->
+        <!-- Add Words Screen -->
         <div id="add-words-screen" class="card hidden">
             <h2>Begriffe hinzufügen</h2>
             <p>Füge mindestens 16 Begriffe hinzu, die für das Bingo-Spiel verwendet werden.</p>
             
             <div class="form-group">
                 <label for="bingo-words">Begriffe (einer pro Zeile)</label>
-                <textarea id="bingo-words" placeholder="Gib hier deine Begriffe ein, einer pro Zeile"></textarea>
+                <textarea id="bingo-words" placeholder="Gib hier deine Begriffe ein, einer pro Line"></textarea>
             </div>
             
             <div id="host-add-words-view">
                 <button id="submit-words-btn" class="btn">Begriffe einreichen</button>
-                <button id="start-game-btn" class="btn">Bingo starten</button>
+                <button id="start-game-btn" class="btn btn-green">Bingo starten</button>
                 <p id="words-count">0 Begriffe gesammelt</p>
             </div>
             
@@ -269,25 +339,21 @@
             </div>
         </div>
 
-        <!-- Game Screen (hidden initially) -->
+        <!-- Game Screen -->
         <div id="game-screen" class="card hidden">
             <h2>Bingo!</h2>
-            <p>Markiere die Begriffe, wenn sie genannt werden. Vier in einer Reihe gewinnt!</p>
+            <p>Markiere die Begriffe, wenn sie auf deinem Feld erscheinen. Vier in einer Reihe gewinnt!</p>
             
             <div class="bingo-grid" id="bingo-board">
                 <!-- Bingo cells will be generated here -->
             </div>
             
             <div id="host-game-view">
-                <button id="call-next-btn" class="btn">Nächsten Begriff ziehen</button>
-                <div id="called-words">
-                    <h3>Gezogene Begriffe:</h3>
-                    <div id="called-words-list"></div>
-                </div>
+                <button id="back-to-lobby-btn" class="btn btn-secondary">Zurück zur Lobby</button>
             </div>
             
             <div id="player-game-view" class="hidden">
-                <h3>Aktueller Begriff: <span id="current-word"></span></h3>
+                <button id="back-to-lobby-btn-player" class="btn btn-secondary">Zurück zur Lobby</button>
             </div>
         </div>
     </div>
@@ -300,14 +366,14 @@
             playerName: '',
             players: [],
             allWords: [],
-            calledWords: [],
             myWords: [],
-            gameStarted: false,
+            jokerCount: 0,
             wordsSubmitted: 0
         };
 
         // DOM elements
         const screens = {
+            menu: document.getElementById('main-menu-screen'),
             create: document.getElementById('create-game-screen'),
             join: document.getElementById('join-game-screen'),
             lobby: document.getElementById('lobby-screen'),
@@ -328,16 +394,32 @@
         };
 
         // Buttons
+        document.getElementById('create-game-menu-btn').addEventListener('click', () => showScreen('create'));
+        document.getElementById('join-game-menu-btn').addEventListener('click', () => showScreen('join'));
+        document.getElementById('back-to-menu-btn').addEventListener('click', () => showScreen('menu'));
+        document.getElementById('back-to-menu-btn-2').addEventListener('click', () => showScreen('menu'));
+        document.getElementById('back-to-lobby-btn').addEventListener('click', () => showScreen('lobby'));
+        document.getElementById('back-to-lobby-btn-player').addEventListener('click', () => showScreen('lobby'));
+        
         document.getElementById('create-game-btn').addEventListener('click', createGame);
         document.getElementById('join-game-btn').addEventListener('click', joinGame);
-        document.getElementById('back-to-create-btn').addEventListener('click', () => {
-            showScreen('create');
-        });
         document.getElementById('start-adding-words-btn').addEventListener('click', startAddingWords);
         document.getElementById('submit-words-btn').addEventListener('click', submitWords);
         document.getElementById('submit-player-words-btn').addEventListener('click', submitWords);
         document.getElementById('start-game-btn').addEventListener('click', startGame);
-        document.getElementById('call-next-btn').addEventListener('click', callNextWord);
+        
+        // Joker controls
+        document.getElementById('joker-increase').addEventListener('click', () => {
+            gameState.jokerCount++;
+            updateJokerDisplay();
+        });
+        
+        document.getElementById('joker-decrease').addEventListener('click', () => {
+            if (gameState.jokerCount > 0) {
+                gameState.jokerCount--;
+                updateJokerDisplay();
+            }
+        });
 
         // Generate a random game ID
         function generateGameId() {
@@ -361,9 +443,11 @@
             gameState.isHost = true;
             gameState.playerName = hostName;
             gameState.players = [hostName];
+            gameState.jokerCount = 0;
 
             document.getElementById('display-game-id').textContent = gameState.gameId;
             updatePlayersList();
+            updateJokerDisplay();
             showScreen('lobby');
         }
 
@@ -458,7 +542,6 @@
             // Generate individual bingo cards
             generateBingoCard();
             
-            gameState.gameStarted = true;
             showScreen('game');
             
             // Show appropriate view based on host/player
@@ -471,29 +554,6 @@
             }
         }
 
-        // Call the next word in the game
-        function callNextWord() {
-            if (gameState.allWords.length === 0) {
-                alert('Alle Begriffe wurden aufgerufen!');
-                return;
-            }
-
-            // Get and remove the next word
-            const nextWord = gameState.allWords.pop();
-            gameState.calledWords.push(nextWord);
-            
-            // Update called words list
-            const calledWordsList = document.getElementById('called-words-list');
-            const wordElement = document.createElement('div');
-            wordElement.textContent = nextWord;
-            calledWordsList.appendChild(wordElement);
-            
-            // Update current word display for players
-            document.getElementById('current-word').textContent = nextWord;
-            
-            // Check if any player has bingo (not implemented in this demo)
-        }
-
         // Generate a bingo card for the player
         function generateBingoCard() {
             const bingoBoard = document.getElementById('bingo-board');
@@ -503,13 +563,26 @@
             const cardWords = shuffleArray([...gameState.allWords]).slice(0, 16);
             gameState.myWords = cardWords;
             
+            // Determine which cells will be jokers (pre-selected)
+            const jokerPositions = [];
+            while (jokerPositions.length < gameState.jokerCount) {
+                const pos = Math.floor(Math.random() * 16);
+                if (pos !== 7 && !jokerPositions.includes(pos)) { // Don't use center cell
+                    jokerPositions.push(pos);
+                }
+            }
+            
             // Create cells
             for (let i = 0; i < 16; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'bingo-cell';
+                
                 if (i === 7) { // Center cell is free
                     cell.textContent = 'FREI';
                     cell.classList.add('free');
+                } else if (jokerPositions.includes(i)) {
+                    cell.textContent = cardWords[i] || 'JOKER';
+                    cell.classList.add('selected');
                 } else {
                     cell.textContent = cardWords[i] || '-';
                 }
@@ -542,6 +615,11 @@
             });
         }
 
+        // Update joker count display
+        function updateJokerDisplay() {
+            document.getElementById('joker-count').textContent = gameState.jokerCount;
+        }
+
         // Show a specific screen and hide others
         function showScreen(screenName) {
             Object.values(screens).forEach(screen => {
@@ -562,7 +640,7 @@
 
         // Initialize the app
         function init() {
-            showScreen('create');
+            showScreen('menu');
         }
 
         init();
